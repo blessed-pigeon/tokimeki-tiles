@@ -138,6 +138,11 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
 .stats span{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 .card .sub{color:var(--muted);font-size:13px;margin:0}
 .card .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.fb{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:14px;padding:9px 16px;border-radius:999px;text-decoration:none;color:var(--lock-ink);background:color-mix(in srgb,var(--lock) 14%,transparent);border:1.5px solid color-mix(in srgb,var(--lock) 55%,transparent)}
+.fb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card .fb{margin-top:4px;justify-self:center}
+.fbfoot{display:grid;gap:10px;justify-items:center;text-align:center;padding-top:8px;border-top:1px solid var(--line)}
+.fbfoot p{margin:0;color:var(--muted);font-size:13px}
 @media (prefers-reduced-motion: reduce){.song,#score{transition:none}}
 </style>
 
@@ -207,6 +212,11 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
     <div id="shopstatus" aria-live="polite"></div>
     <ol class="songs" id="list-shop"></ol>
   </section>
+
+  <footer class="fbfoot">
+    <p>Made by a 3rd grader, with songs written by his mom 🎵</p>
+    <a class="fb" href="https://www.threads.com/@blessed_pigeon" target="_blank" rel="noopener">💬 Played it? Tell us what you think on Threads!</a>
+  </footer>
 </main>
 
 <div id="game" hidden>
@@ -236,6 +246,7 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
         <button class="btn" id="nextsong" type="button">Next song</button>
         <button class="btn" id="tosongs" type="button">Songs</button>
       </div>
+      <a class="fb" href="https://www.threads.com/@blessed_pigeon" target="_blank" rel="noopener">💬 How was it? Tell us on Threads!</a>
     </div>
   </div>
 </div>
