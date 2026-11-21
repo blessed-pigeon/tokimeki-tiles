@@ -377,13 +377,18 @@ const FILE_SONGS=[
   {t:'Candy Cloud Hop',dur:188.55,cover:'songs/candy-cloud-hop.jpg',src:'songs/candy-cloud-hop.mp3'},
   {t:'폰 내려놔',dur:176.67,cover:'songs/look-up.jpg',src:'songs/look-up.mp3'},
   {t:'Last night',dur:163.79,cover:'songs/last-night.jpg',src:'songs/last-night.mp3'},
-  {t:'고백 리허설',dur:157.47,cover:'songs/rehearsal.jpg',src:'songs/rehearsal.mp3'}
+  {t:'고백 리허설',dur:157.47,cover:'songs/rehearsal.jpg',src:'songs/rehearsal.mp3'},
+  {t:'Melting Icicle',dur:275.25,cover:'songs/icicle.jpg',src:'songs/icicle.mp3'},
+  {t:'forefore',dur:149.34,cover:'songs/forefore.jpg',src:'songs/forefore.mp3'},
+  {t:'Whenever I Call Your Name',dur:210.26,cover:'songs/whenever.jpg',src:'songs/whenever.mp3'},
+  {t:'Snowy Night Road',dur:201.8,cover:'songs/snow-road.jpg',src:'songs/snow-road.mp3'},
+  {t:'lyric',dur:143.44,cover:'songs/lyric.jpg',src:'songs/lyric.mp3'}
 ];
 /* genre of each of our songs, by title: jpop, kpop or inst. Songs not listed here show under "Not sorted yet" */
 const OUR_GENRE={'二度目の青春':'jpop','スタート!':'jpop','もしもし':'jpop','笑顔':'jpop','灯篭ステップ':'jpop','錆びた剣とマーマレード':'jpop','ポケットの中の小さなもの':'jpop','버스 정류장':'kpop','Marshmallow':'kpop','폰 내려놔':'kpop','Last night':'kpop','고백 리허설':'kpop','ZERO GRAVITY CODE':'jpop','Soda Pop Summer':'jpop','podland':'inst','Candy Cloud Hop':'inst'};
 /* free songs: もしもし, ZERO GRAVITY CODE, 氷がとけたら. Every other song is locked: [level, price]. Higher levels have denser, faster tiles */
 /* free songs: everything listed up to ZERO GRAVITY CODE. Every other song is locked: [level, price]. Higher levels have denser, faster tiles */
-const OUR_LOCK={'Soda Pop Summer':[1,100],'Marshmallow':[1,100],'ポケットの中の小さなもの':[1,100],'고백 리허설':[1,100],'버스 정류장':[1,100],'폰 내려놔':[2,200],'Candy Cloud Hop':[2,200],'podland':[2,200],'Last night':[3,300],'錆びた剣とマーマレード':[3,300],'灯篭ステップ':[3,300]};
+const OUR_LOCK={'Melting Icicle':[2,200],'forefore':[3,300],'Whenever I Call Your Name':[3,300],'Snowy Night Road':[3,300],'lyric':[3,300],'Soda Pop Summer':[1,100],'Marshmallow':[1,100],'ポケットの中の小さなもの':[1,100],'고백 리허설':[1,100],'버스 정류장':[1,100],'폰 내려놔':[2,200],'Candy Cloud Hop':[2,200],'podland':[2,200],'Last night':[3,300],'錆びた剣とマーマレード':[3,300],'灯篭ステップ':[3,300]};
 const LV_GAP=[1,.85,.75,.65],LV_SPEED=[1,1.1,1.2,1.3];
 const OURS=[...(window.OUR_SONGS||[]),...FILE_SONGS].map((o,i)=>({id:'ours-'+o.t,genre:OUR_GENRE[o.t]||'none',lvl:(OUR_LOCK[o.t]||[0])[0],shop:!!OUR_LOCK[o.t],price:(OUR_LOCK[o.t]||[0,0])[1],t:o.t,j:'Songs',dur:o.dur,size:o.b64?Math.round(o.b64.length*3/4):0,mine:true,builtin:true,cover:o.cover,b64:o.b64,src:o.src,oc:'var(--o'+(i%6+1)+')',
   get blob(){if(!this._blob){const bin=atob(this.b64),u=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)u[k]=bin.charCodeAt(k);this._blob=new Blob([u],{type:'audio/mpeg'})}return this._blob}}));
