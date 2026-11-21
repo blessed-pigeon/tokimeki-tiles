@@ -373,7 +373,15 @@ const SHOPLIST=[
   ['Lightspeed Ramen','光速ラーメン','hyper'],['Final Boss Festival','ラスボス祭り','hyper']
 ];
 const SHOP=SHOPLIST.map(([t,j,s],i)=>Object.assign({id:'s'+i,t,j,style:s,shop:true,price:t==='Final Boss Festival'?500:PRICE[s],oc:'var(--o'+((i+3)%6+1)+')'},genSong(100+i,s)));
-const PLAIN=[...SONGS,...SHOP].sort((a,b)=>a.price-b.price);
+/* more game songs, added in batches of 10. Add new batches to the end of this list; ids (g0, g1, …) must never change */
+const GAME_MORE=[
+  ['Yozora Telephone','夜空テレフォン','synth'],['Hashire Melody','走れメロディ','sprint'],['Mikan Sunset','みかんサンセット','funk'],
+  ['Kaze no Tegami','風の手紙','ballad'],['Sakura Dash','桜ダッシュ','sprint'],['Ameagari Pop','雨上がりポップ','story'],
+  ['Starlight Bento','スターライト弁当','anthem'],['Neko Neko Groove','ねこねこグルーヴ','funk'],['Ginga Express','銀河エクスプレス','hyper'],
+  ['Hotaru Lullaby','蛍ララバイ','ballad']
+];
+const MORE=GAME_MORE.map(([t,j,s],i)=>Object.assign({id:'g'+i,t,j,style:s,shop:true,price:PRICE[s],oc:'var(--o'+((i+5)%6+1)+')'},genSong(200+i,s)));
+const PLAIN=[...SONGS,...SHOP,...MORE].sort((a,b)=>a.price-b.price);
 const MY=[];
 /* our own songs, embedded in this page */
 /* more of our songs, published as separate files next to this page (add new ones here) */
