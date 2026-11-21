@@ -143,6 +143,11 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
 .card .fb{margin-top:4px;justify-self:center}
 .fbfoot{display:grid;gap:10px;justify-items:center;text-align:center;padding-top:8px;border-top:1px solid var(--line)}
 .fbfoot p{margin:0;color:var(--muted);font-size:13px}
+.savebox{width:100%;max-width:520px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}
+.savebox summary{cursor:pointer;font-weight:800;font-size:14px;min-height:28px}
+.savebox[open]{display:grid;gap:10px}.savebox p{text-align:left}
+.savebox textarea{width:100%;font:14px/1.4 ui-monospace,monospace;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.svrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}#svmsg{font-size:13px;color:var(--muted)}
 .langs{justify-self:start}
 @media (prefers-reduced-motion: reduce){.song,#score{transition:none}}
 </style>
@@ -218,6 +223,13 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
   <footer class="fbfoot">
     <p data-i18n="foot">Made by a 3rd grader, with songs written by his mom 🎵</p>
     <a class="fb" href="https://www.threads.com/@blessed_pigeon" target="_blank" rel="noopener" data-i18n="footfb">💬 Played it? Tell us what you think on Threads!</a>
+    <details class="savebox">
+      <summary data-i18n="svsum">Save code: move your coins and songs to another link or device</summary>
+      <p data-i18n="svhelp">Copy your save code here, then paste it into the game on the other link or device and tap Load.</p>
+      <div class="svrow"><button class="btn" id="svcopy" type="button" data-i18n="svcopy">Copy my save code</button></div>
+      <textarea id="svtext" rows="3" spellcheck="false" aria-label="Save code" placeholder="TT1-…"></textarea>
+      <div class="svrow"><button class="btn primary" id="svload" type="button" data-i18n="svload">Load this code</button><span id="svmsg" aria-live="polite"></span></div>
+    </details>
   </footer>
 </main>
 
@@ -398,6 +410,20 @@ const starsFor=f=>f>=1?3:f>=.66?2:f>=.33?1:0;
 let coins=store.get('tt-coins'); if(typeof coins!=='number') coins=150;
 const owned=new Set(store.get('tt-owned')||[]);
 const saveWallet=()=>{store.set('tt-coins',coins);store.set('tt-owned',[...owned])};
+/* save code: coins, unlocked songs and best scores packed into one text code (TT1-...) to move progress between links or devices */
+function makeSaveCode(){
+  const b={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('tt3-best-')){const v=store.get(k);if(v)b[k.slice(9)]=[v.score||0,v.stars||0,v.full?1:0]}}}catch(e){}
+  const json=JSON.stringify({v:1,c:coins,o:[...owned],b});
+  return 'TT1-'+btoa(unescape(encodeURIComponent(json)));
+}
+function loadSaveCode(code){
+  code=(code||'').trim().replace(/\s+/g,'');if(!code.startsWith('TT1-')) throw new Error('bad');
+  const d=JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))));
+  if(typeof d.c!=='number'||!Array.isArray(d.o)) throw new Error('bad');
+  coins=Math.max(0,Math.floor(d.c));d.o.forEach(id=>owned.add(String(id)));saveWallet();
+  Object.entries(d.b||{}).forEach(([id,[sc,st,f]])=>{const k='tt3-best-'+id,old=store.get(k)||{score:0,stars:0,full:false};store.set(k,{score:Math.max(old.score||0,sc||0),stars:Math.max(old.stars||0,st||0),full:!!(old.full||f)})});
+  return d;
+}
 const isOwned=s=>!s.shop||owned.has(s.id);
 const fmtTime=s=>Math.floor(s/60)+':'+String(Math.round(s%60)).padStart(2,'0');
 
@@ -438,7 +464,7 @@ function addFiles(list){
 
 /* ---------- menu ---------- */
 /* ---------- language: English / 日本語 ---------- */
-const I18N_JA={"b1": "下から順にタイルをタップ。何もない所は触らないでね。", "b2": "<b>TAP LINE</b>でタップ：PERFECT ×3、GREAT ×2、GOOD ×1。", "b3": "長いタイルは<b>長押し</b>、<b>★タイル</b>も狙おう。<b>FEVER</b>（サビ）と速いスピードは高得点。", "b4": "<b>曲をクリア</b>するとコインがもらえて、次の曲を解放できます。", "b5": "速いスピードほどコインが多い：<b>Normal ×1 · Fast ×1.5 · Extreme ×2 · Turbo ×3</b>。", "shuffle": "シャッフル", "tilecolors": "タイルの色", "songsh": "ソング", "songsnote": "このゲームのために作った曲です。本物の曲が流れて、タイルがそのリズムに合わせて降ってきます。<b>FREE</b>の曲をクリアしてコインを集め、ほかの曲を解放しよう。ロック中の曲は難しめ：レベル1〜3でタイルが多く、速くなります。", "inst": "インスト", "none": "未分類", "gameh": "ゲーム曲", "gamenote": "ゲームが自動で作った、歌のないインスト曲です。どれも200コイン以上。Hyper rushの曲は約200BPMです。", "foot": "小学3年生が作ったゲームに、ママが作った歌を入れました 🎵", "footfb": "💬 遊んでみた？Threadsで感想を教えてね！", "resfb": "💬 どうだった？Threadsで教えてね！", "ld1": "リズムを解析中…", "ld2": "曲のビートを探しています", "st1": "タイル", "st2": "最大コンボ", "st3": "ロング成功", "st4": "★タイル", "retry": "もう一度", "next": "次の曲", "tosongs": "曲一覧"};
+const I18N_JA={"b1": "下から順にタイルをタップ。何もない所は触らないでね。", "b2": "<b>TAP LINE</b>でタップ：PERFECT ×3、GREAT ×2、GOOD ×1。", "b3": "長いタイルは<b>長押し</b>、<b>★タイル</b>も狙おう。<b>FEVER</b>（サビ）と速いスピードは高得点。", "b4": "<b>曲をクリア</b>するとコインがもらえて、次の曲を解放できます。", "b5": "速いスピードほどコインが多い：<b>Normal ×1 · Fast ×1.5 · Extreme ×2 · Turbo ×3</b>。", "shuffle": "シャッフル", "tilecolors": "タイルの色", "songsh": "ソング", "songsnote": "このゲームのために作った曲です。本物の曲が流れて、タイルがそのリズムに合わせて降ってきます。<b>FREE</b>の曲をクリアしてコインを集め、ほかの曲を解放しよう。ロック中の曲は難しめ：レベル1〜3でタイルが多く、速くなります。", "inst": "インスト", "none": "未分類", "gameh": "ゲーム曲", "gamenote": "ゲームが自動で作った、歌のないインスト曲です。どれも200コイン以上。Hyper rushの曲は約200BPMです。", "foot": "小学3年生が作ったゲームに、ママが作った歌を入れました 🎵", "footfb": "💬 遊んでみた？Threadsで感想を教えてね！", "resfb": "💬 どうだった？Threadsで教えてね！", "ld1": "リズムを解析中…", "ld2": "曲のビートを探しています", "st1": "タイル", "st2": "最大コンボ", "st3": "ロング成功", "st4": "★タイル", "retry": "もう一度", "next": "次の曲", "tosongs": "曲一覧", "svsum": "セーブコード：コインと曲をほかのリンクや端末に移す", "svhelp": "ここでセーブコードをコピーして、ほかのリンクや端末のゲームに貼り付けて「読み込む」をタップしてください。", "svcopy": "セーブコードをコピー", "svload": "このコードを読み込む"};
 const I18N_EN={};
 let LANG=store.get('tt-lang')||((navigator.language||'').toLowerCase().startsWith('ja')?'ja':'en');
 const L=(en,ja)=>LANG==='ja'?ja:en;
@@ -1141,6 +1167,11 @@ document.getElementById('tosongs').addEventListener('click',toMenu);
 document.getElementById('retry').addEventListener('click',()=>startSong(G.song));
 document.getElementById('nextsong').addEventListener('click',()=>{const a=allSongs();startSong(a[(a.indexOf(G.song)+1)%a.length])});
 document.getElementById('shuffle').addEventListener('click',()=>{const a=allSongs();startSong(a[Math.floor(Math.random()*a.length)])});
+{const ta=document.getElementById('svtext'),msg=document.getElementById('svmsg');
+ document.getElementById('svcopy').addEventListener('click',()=>{ta.value=makeSaveCode();ta.select();
+   const ok=()=>{msg.textContent=L('Copied! Paste it in the other game.','コピーしました！ほかのゲームに貼り付けてください。')};
+   try{navigator.clipboard.writeText(ta.value).then(ok,()=>{msg.textContent=L('Select the code above and copy it.','上のコードを選んでコピーしてください。')})}catch(e){msg.textContent=L('Select the code above and copy it.','上のコードを選んでコピーしてください。')}});
+ document.getElementById('svload').addEventListener('click',()=>{try{const d=loadSaveCode(ta.value);renderMenu();msg.textContent=L(`Loaded! ${coins} coins, ${d.o.length} unlocked songs.`,`読み込みました！${coins}コイン、解放した曲${d.o.length}曲。`)}catch(e){msg.textContent=L('That code doesn\'t look right. Check it and try again.','コードが正しくないようです。確認してもう一度試してください。')}});}
 applyLang();
 renderMenu();
 idbLoad().then(rows=>{rows.forEach(r=>{if(r.blob&&!MY.some(m=>m.id===r.id)) MY.push(mkMine(r))});if(rows.length) renderMenu()});
