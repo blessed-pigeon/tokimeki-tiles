@@ -143,6 +143,22 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
 .card .fb{margin-top:4px;justify-self:center}
 .fbfoot{display:grid;gap:10px;justify-items:center;text-align:center;padding-top:8px;border-top:1px solid var(--line)}
 .fbfoot p{margin:0;color:var(--muted);font-size:13px}
+.packs-wrap{display:grid;gap:8px}
+.packs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:0;margin:0;list-style:none}
+.pack{font:inherit;text-align:left;display:grid;gap:6px;align-content:start;padding:12px;border-radius:14px;cursor:pointer;color:var(--ink);background:color-mix(in srgb,var(--lock) 9%,var(--surface));border:1.5px solid color-mix(in srgb,var(--lock) 40%,transparent);width:100%;min-height:100%}
+.pack:hover{border-color:var(--lock)}
+.pack .pn{font-weight:900;font-size:16px;color:var(--lock-ink)}
+.pack .pg{font-size:12.5px;line-height:1.45;color:var(--muted)}
+.pack .pw{font-weight:900;font-size:15px;font-variant-numeric:tabular-nums;margin-top:auto}
+.pack.best{border-width:2px;border-color:var(--lock)}
+.pack .tagb{justify-self:start;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--lock);color:#fff}
+#paydlg{border:none;border-radius:18px;padding:18px;width:min(420px,92vw);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#paydlg::backdrop{background:rgba(10,10,30,.5)}
+#paydlg h3{margin:0 0 4px;color:var(--lock-ink)}
+#paydlg ul{margin:6px 0;padding-left:20px;max-height:38vh;overflow:auto;font-size:13.5px;line-height:1.5}
+#paydlg .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
+#paydlg .pnote{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+#paydlg .btn.primary:disabled{opacity:.5;cursor:not-allowed}
 .savebox{width:100%;max-width:520px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}
 .savebox summary{cursor:pointer;font-weight:800;font-size:14px;min-height:28px}
 .savebox[open]{display:grid;gap:10px}.savebox p{text-align:left}
@@ -185,6 +201,18 @@ h2 small{font-family:var(--f-body);font-size:12px;letter-spacing:.12em;color:var
     </div>
     <div class="chips" id="chips" role="toolbar" aria-label="Filter by genre"></div>
   </header>
+
+  <section id="sec-packs" class="packs-wrap">
+    <h2 data-i18n="packh">Packs</h2>
+    <p class="note" data-i18n="packnote">Get coins and unlock songs right away. Each pack unlocks songs you don't have yet.</p>
+    <ul class="packs" id="list-packs"></ul>
+  </section>
+  <dialog id="paydlg" aria-labelledby="pdtitle">
+    <h3 id="pdtitle"></h3>
+    <div id="pdbody"></div>
+    <p class="pnote" id="pdnote"></p>
+    <div class="row"><button class="btn" id="pdclose" type="button"></button><button class="btn primary" id="pdpay" type="button"></button></div>
+  </dialog>
 
   <section id="sec-ours" class="ours-wrap">
     <h2 data-i18n="songsh">Songs</h2>
@@ -477,7 +505,7 @@ function addFiles(list){
 
 /* ---------- menu ---------- */
 /* ---------- language: English / 日本語 ---------- */
-const I18N_JA={"b1": "下から順にタイルをタップ。何もない所は触らないでね。", "b2": "<b>TAP LINE</b>でタップ：PERFECT ×3、GREAT ×2、GOOD ×1。", "b3": "長いタイルは<b>長押し</b>、<b>★タイル</b>も狙おう。<b>FEVER</b>（サビ）と速いスピードは高得点。", "b4": "<b>曲をクリア</b>するとコインがもらえて、次の曲を解放できます。", "b5": "速いスピードほどコインが多い：<b>Normal ×1 · Fast ×1.5 · Extreme ×2 · Turbo ×3</b>。", "shuffle": "シャッフル", "tilecolors": "タイルの色", "songsh": "ソング", "songsnote": "このゲームのために作った曲です。本物の曲が流れて、タイルがそのリズムに合わせて降ってきます。<b>FREE</b>の曲をクリアしてコインを集め、ほかの曲を解放しよう。ロック中の曲は難しめ：レベル1〜3でタイルが多く、速くなります。", "inst": "インスト", "none": "未分類", "gameh": "ゲーム曲", "gamenote": "ゲームが自動で作った、歌のないインスト曲です。どれも200コイン以上。Hyper rushの曲は約200BPMです。", "foot": "小学3年生が作ったゲームに、ママが作った歌を入れました 🎵", "footfb": "💬 遊んでみた？Threadsで感想を教えてね！", "resfb": "💬 どうだった？Threadsで教えてね！", "ld1": "リズムを解析中…", "ld2": "曲のビートを探しています", "st1": "タイル", "st2": "最大コンボ", "st3": "ロング成功", "st4": "★タイル", "retry": "もう一度", "next": "次の曲", "tosongs": "曲一覧", "svsum": "セーブコード：コインと曲をほかのリンクや端末に移す", "svhelp": "ここでセーブコードをコピーして、ほかのリンクや端末のゲームに貼り付けて「読み込む」をタップしてください。", "svcopy": "セーブコードをコピー", "svload": "このコードを読み込む"};
+const I18N_JA={"b1": "下から順にタイルをタップ。何もない所は触らないでね。", "b2": "<b>TAP LINE</b>でタップ：PERFECT ×3、GREAT ×2、GOOD ×1。", "b3": "長いタイルは<b>長押し</b>、<b>★タイル</b>も狙おう。<b>FEVER</b>（サビ）と速いスピードは高得点。", "b4": "<b>曲をクリア</b>するとコインがもらえて、次の曲を解放できます。", "b5": "速いスピードほどコインが多い：<b>Normal ×1 · Fast ×1.5 · Extreme ×2 · Turbo ×3</b>。", "shuffle": "シャッフル", "tilecolors": "タイルの色", "songsh": "ソング", "songsnote": "このゲームのために作った曲です。本物の曲が流れて、タイルがそのリズムに合わせて降ってきます。<b>FREE</b>の曲をクリアしてコインを集め、ほかの曲を解放しよう。ロック中の曲は難しめ：レベル1〜3でタイルが多く、速くなります。", "inst": "インスト", "none": "未分類", "gameh": "ゲーム曲", "gamenote": "ゲームが自動で作った、歌のないインスト曲です。どれも200コイン以上。Hyper rushの曲は約200BPMです。", "foot": "小学3年生が作ったゲームに、ママが作った歌を入れました 🎵", "footfb": "💬 遊んでみた？Threadsで感想を教えてね！", "resfb": "💬 どうだった？Threadsで教えてね！", "ld1": "リズムを解析中…", "ld2": "曲のビートを探しています", "st1": "タイル", "st2": "最大コンボ", "st3": "ロング成功", "st4": "★タイル", "retry": "もう一度", "next": "次の曲", "tosongs": "曲一覧", "svsum": "セーブコード：コインと曲をほかのリンクや端末に移す", "svhelp": "ここでセーブコードをコピーして、ほかのリンクや端末のゲームに貼り付けて「読み込む」をタップしてください。", "svcopy": "セーブコードをコピー", "svload": "このコードを読み込む", "packh": "パック", "packnote": "コインをもらって、すぐに曲を解放できます。まだ持っていない曲から解放されます。"};
 const I18N_EN={};
 let LANG=store.get('tt-lang')||((navigator.language||'').toLowerCase().startsWith('ja')?'ja':'en');
 const L=(en,ja)=>LANG==='ja'?ja:en;
@@ -562,6 +590,7 @@ function row(s){
   return li;
 }
 function renderMenu(){
+  renderPacks();
   const my=document.getElementById('list-my'),or=document.getElementById('list-orig');
   my.textContent='';or.textContent='';
   const sh=document.getElementById('list-shop');sh.textContent='';
@@ -1185,6 +1214,75 @@ document.getElementById('shuffle').addEventListener('click',()=>{const a=allSong
    const ok=()=>{msg.textContent=L('Copied! Paste it in the other game.','コピーしました！ほかのゲームに貼り付けてください。')};
    try{navigator.clipboard.writeText(ta.value).then(ok,()=>{msg.textContent=L('Select the code above and copy it.','上のコードを選んでコピーしてください。')})}catch(e){msg.textContent=L('Select the code above and copy it.','上のコードを選んでコピーしてください。')}});
  document.getElementById('svload').addEventListener('click',()=>{try{const d=loadSaveCode(ta.value);renderMenu();msg.textContent=L(`Loaded! ${coins} coins, ${d.o.length} unlocked songs.`,`読み込みました！${coins}コイン、解放した曲${d.o.length}曲。`)}catch(e){msg.textContent=L('That code doesn\'t look right. Check it and try again.','コードが正しくないようです。確認してもう一度試してください。')}});}
+/* ---------- packs (card payment) ----------
+   PAY.mode: 'off'  = packs are shown, payment says "coming soon" (public site until the PG contract is done)
+             'test' = add ?paytest=1 to the link: a fake card payment that charges nothing, for checking the flow
+             'live' = real card payment through the PG (Toss Payments / PortOne). Needs the PG contract and a small
+                      server that confirms each payment before the pack is given. Fill in startLivePayment() then. */
+const PAY={mode:new URLSearchParams(location.search).has('paytest')?'test':'off'};
+const PACKS=[
+  {id:'coins1000',n:'Coin pack',nj:'コインパック',won:1000,coins:1000},
+  {id:'starter',n:'Starter',nj:'スターター',won:2900,coins:1000,game:10},
+  {id:'middle',n:'Middle',nj:'ミドル',won:7900,coins:3000,game:15,ours:{inst:1,kpop:3,jpop:5}},
+  {id:'hard',n:'Hard',nj:'ハード',won:12900,coins:4000,game:'half',any:12},
+  {id:'master',n:'Master',nj:'マスター',won:14900,coins:5000,game:'all',any:'all',best:true}];
+const won=n=>'₩'+n.toLocaleString('en-US');
+const GNAME={jpop:'J-POP',kpop:'K-POP',inst:'Instrumental'};
+function packSongs(p){
+  const out=[];
+  if(p.game){const want=p.game==='all'?PLAIN.length:p.game==='half'?Math.ceil(PLAIN.length/2):p.game;
+    out.push(...PLAIN.filter(s=>!isOwned(s)).slice(0,want))}
+  const ourLocked=g=>OURS.filter(s=>s.shop&&!isOwned(s)&&(!g||s.genre===g)).sort((a,b)=>a.lvl-b.lvl||a.price-b.price);
+  if(p.ours) for(const g in p.ours) out.push(...ourLocked(g).slice(0,p.ours[g]));
+  if(p.any){if(p.any==='all') out.push(...ourLocked());
+    else{const q={jpop:ourLocked('jpop'),kpop:ourLocked('kpop'),inst:ourLocked('inst'),none:ourLocked('none')},pick=[];
+      while(pick.length<p.any&&Object.values(q).some(a=>a.length)) for(const g in q){if(pick.length<p.any&&q[g].length) pick.push(q[g].shift())}
+      out.push(...pick)}}
+  return out;
+}
+function packLines(p){
+  const l=[L(`${p.coins.toLocaleString()} coins`,`${p.coins.toLocaleString()}コイン`)];
+  if(p.game) l.push(p.game==='all'?L('All Game songs','ゲーム曲すべて'):p.game==='half'?L('Half of the Game songs','ゲーム曲の半分'):L(`${p.game} Game songs`,`ゲーム曲${p.game}曲`));
+  if(p.ours) l.push(Object.entries(p.ours).map(([g,n])=>`${GNAME[g]} ${n}`).join(' · '));
+  if(p.any) l.push(p.any==='all'?L('All of our songs','私たちの曲すべて'):L(`${p.any} of our songs (all genres)`,`私たちの曲${p.any}曲（全ジャンル）`));
+  return l;
+}
+function renderPacks(){
+  const ul=document.getElementById('list-packs');ul.textContent='';
+  PACKS.forEach(p=>{const li=document.createElement('li'),b=document.createElement('button');b.type='button';b.className='pack'+(p.best?' best':'');
+    if(p.best) b.append(Object.assign(document.createElement('span'),{className:'tagb',textContent:L('Best value','いちばんお得')}));
+    b.append(Object.assign(document.createElement('span'),{className:'pn',textContent:L(p.n,p.nj)}));
+    const g=document.createElement('span');g.className='pg';packLines(p).forEach((t,i)=>{if(i)g.append(document.createElement('br'));g.append(t)});b.append(g);
+    b.append(Object.assign(document.createElement('span'),{className:'pw',textContent:won(p.won)}));
+    b.addEventListener('click',()=>openPack(p));li.append(b);ul.append(li)});
+}
+const dlg=document.getElementById('paydlg');let curPack=null;
+function openPack(p){
+  curPack=p;const songs=packSongs(p);
+  document.getElementById('pdtitle').textContent=`${L(p.n,p.nj)} · ${won(p.won)}`;
+  const body=document.getElementById('pdbody');body.textContent='';
+  const ul=document.createElement('ul');
+  ul.append(Object.assign(document.createElement('li'),{textContent:L(`+${p.coins.toLocaleString()} coins`,`+${p.coins.toLocaleString()}コイン`)}));
+  songs.forEach(s=>ul.append(Object.assign(document.createElement('li'),{textContent:s.t+(s.genre&&GNAME[s.genre]?` (${GNAME[s.genre]})`:'')})));
+  body.append(Object.assign(document.createElement('p'),{className:'note',textContent:songs.length?L(`Unlocks these ${songs.length} songs:`,`この${songs.length}曲が解放されます：`):L('You already have every song in this pack, so you get the coins only.','このパックの曲はすべて持っているので、コインだけもらえます。')}),ul);
+  const pay=document.getElementById('pdpay'),note=document.getElementById('pdnote');
+  document.getElementById('pdclose').textContent=L('Close','閉じる');
+  if(PAY.mode==='test'){pay.disabled=false;pay.textContent=L(`Test card payment ${won(p.won)}`,`テストカード決済 ${won(p.won)}`);note.textContent=L('TEST MODE: no money is charged.','テストモード：お金はかかりません。')}
+  else if(PAY.mode==='live'){pay.disabled=false;pay.textContent=L(`Pay ${won(p.won)} by card`,`カードで${won(p.won)}を支払う`);note.textContent=L('Purchases are saved on this device. Use the save code to move them.','購入はこの端末に保存されます。移すときはセーブコードを使ってください。')}
+  else{pay.disabled=true;pay.textContent=L('Card payment coming soon','カード決済は準備中');note.textContent=L('Card payment opens soon. Stay tuned!','カード決済はもうすぐ始まります。お楽しみに！')}
+  if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+}
+function grantPack(p,ref){
+  const songs=packSongs(p);songs.forEach(s=>owned.add(s.id));coins+=p.coins;saveWallet();
+  const r=store.get('tt-purchases')||[];r.push({p:p.id,won:p.won,ref,at:Date.now(),test:PAY.mode==='test'});store.set('tt-purchases',r);
+  renderMenu();return songs.length;
+}
+function startLivePayment(p){/* TODO after the PG contract: open the PG card window, then have the server confirm the payment, then call grantPack(p,paymentKey) */alert('Payment not set up yet')}
+document.getElementById('pdclose').addEventListener('click',()=>dlg.close?dlg.close():dlg.removeAttribute('open'));
+document.getElementById('pdpay').addEventListener('click',()=>{const p=curPack;if(!p) return;
+  if(PAY.mode==='test'){const n=grantPack(p,'test-'+Date.now());const note=document.getElementById('pdnote');note.textContent=L(`Done! +${p.coins.toLocaleString()} coins and ${n} songs unlocked (test, no charge).`,`完了！+${p.coins.toLocaleString()}コイン、${n}曲を解放しました（テスト・無料）。`);document.getElementById('pdpay').disabled=true}
+  else if(PAY.mode==='live') startLivePayment(p)});
+
 applyLang();
 renderMenu();
 idbLoad().then(rows=>{rows.forEach(r=>{if(r.blob&&!MY.some(m=>m.id===r.id)) MY.push(mkMine(r))});if(rows.length) renderMenu()});
